@@ -1,5 +1,6 @@
 select *
 from app_store_apps;
 
-select *
+select distinct name
 from play_store_apps;
+
