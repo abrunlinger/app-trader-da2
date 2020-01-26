@@ -47,8 +47,9 @@ order by genre;
 (5,000x1 + 5,000x2) - y - 1,000(highest x) */
 
 -- Group by App Layer
-SELECT name, MAX (price), MAX (cost), rating, MAX (lifetime_months), genre_new, content_rating, 
-CASE WHEN count 
+SELECT name, MAX (price) AS price, MAX (cost) AS cost, MAX (rating) AS rating, MAX (lifetime_months) AS lifetime_months, genre_new, content_rating, 
+	CASE WHEN count (name) > 1 THEN SUM (net_value) + MIN (cost) + (1000 * MIN (lifetime_months))
+	ELSE net_value END AS net_value
 FROM
 	-- Net Value Layer
 	(SELECT *, 
@@ -71,7 +72,7 @@ FROM
 			WHEN primary_genre ILIKE '%sport%' THEN 'Sports'
 			WHEN primary_genre ILIKE '%business' OR primary_genre ILIKE '%productivity' THEN 'Business'
 			WHEN primary_genre ILIKE '%navigation%' THEN 'Travel'
-			ELSE 'Other' END AS genre_new, 
+			ELSE primary_genre END AS genre_new, 
 		content_rating
 		FROM app_store_apps
 		UNION ALL
@@ -91,7 +92,8 @@ FROM
 			WHEN genres ILIKE '%sport%' THEN 'Sports'
 			WHEN genres ILIKE '%business' OR genres ILIKE '%productivity' THEN 'Business'
 			WHEN genres ILIKE '%navigation%' THEN 'Travel'
-			ELSE 'Other' END AS genre_new, 
+			WHEN genres ILIKE '%;%' THEN 'Other'
+			ELSE genres END AS genre_new, 
 		content_rating
 		FROM 
 			--Cleanup Layer
@@ -103,8 +105,9 @@ FROM
 			content_rating
 			FROM play_store_apps) AS play_store_apps_clean
 		) AS AppData
-	ORDER BY net_value DESC)
-GROUP BY name	
+	ORDER BY net_value) AS ValueLayer
+GROUP BY name, genre_new, content_rating, net_value
+ORDER BY net_value DESC
 	
 ;
 
