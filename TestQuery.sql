@@ -39,16 +39,17 @@ FULL OUTER JOIN play_store_apps
 using (name)
 order by genre;
 
---SET MyText = LEFT(MyText, CHARINDEX(';', MyText) - 1)
---WHERE CHARINDEX(';', MyText) > 0
+
 /* (12 + 12 * rating) = x
 (10,000 * base price (min. 10,000) = y
 
 (5,000x1 + 5,000x2) - y - 1,000(highest x) */
 
 -- Group by App Layer
-SELECT name, MAX (price) AS price, MAX (cost) AS cost, MAX (rating) AS rating, MAX (lifetime_months) AS lifetime_months, genre_new, content_rating, 
-	CASE WHEN count (name) > 1 THEN SUM (net_value) + MIN (cost) + (1000 * MIN (lifetime_months))
+SELECT name, MAX (price) AS price, MAX (cost) AS cost, MAX (rating) AS rating, 
+MAX (lifetime_months) AS lifetime_months, (MAX (lifetime_months) / 12) AS lifetime_years, 
+genre_new, content_rating, 
+CASE WHEN count (name) > 1 THEN SUM (net_value) + MIN (cost) + (1000 * MIN (lifetime_months))
 	ELSE net_value END AS net_value
 FROM
 	-- Net Value Layer
@@ -115,7 +116,7 @@ ORDER BY net_value DESC
   (SELECT [EmailAddress] FROM [Customers] GROUP BY [EmailAddress] HAVING COUNT(*) > 1) */
 
 -- Genres
-SELECT genre_new, count (genre_new) as count
+SELECT content_rating, count (content_rating) as count
 FROM  
 (SELECT *, 
 	((5000 * lifetime_months) - cost - (1000 * lifetime_months)) as net_value 
@@ -171,6 +172,5 @@ FROM
 			FROM play_store_apps) AS play_store_apps_clean
 		) AS AppData
 	ORDER BY net_value DESC) AS test_data
-GROUP BY genre_new
+GROUP BY content_rating
 ORDER BY count DESC
-LIMIT 500

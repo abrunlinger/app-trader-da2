@@ -1,5 +1,5 @@
--- Genres
-SELECT genre_new, count (genre_new) as count
+-- Content Rating
+SELECT content_rating, count (content_rating) as count
 FROM  
 (SELECT *, 
 	((5000 * lifetime_months) - cost - (1000 * lifetime_months)) as net_value 
@@ -55,5 +55,5 @@ FROM
 			FROM play_store_apps) AS play_store_apps_clean
 		) AS AppData
 	ORDER BY net_value DESC) AS test_data
-GROUP BY genre_new
+GROUP BY content_rating
 ORDER BY count DESC
