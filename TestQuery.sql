@@ -47,7 +47,7 @@ order by genre;
 
 -- Group by App Layer
 SELECT name, MAX (price) AS price, MAX (cost) AS cost, MAX (rating) AS rating, 
-MAX (lifetime_months) AS lifetime_months, (MAX (lifetime_months) / 12) AS lifetime_years, 
+MAX (lifetime_months) AS lifetime_months, ROUND(MAX (lifetime_months) / 12, 1) AS lifetime_years, 
 genre_new, content_rating, 
 CASE WHEN count (name) > 1 THEN SUM (net_value) + MIN (cost) + (1000 * MIN (lifetime_months))
 	ELSE net_value END AS net_value
@@ -106,9 +106,11 @@ FROM
 			content_rating
 			FROM play_store_apps) AS play_store_apps_clean
 		) AS AppData
-	ORDER BY net_value) AS ValueLayer
+	ORDER BY net_value 
+	--End of Net Value Layer
+	) AS ValueLayer
 GROUP BY name, genre_new, content_rating, net_value
-ORDER BY net_value DESC
+ORDER BY net_value
 	
 ;
 

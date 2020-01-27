@@ -5,7 +5,7 @@
 
 -- Group by App Layer
 SELECT name, MAX (price) AS price, MAX (cost) AS cost, MAX (rating) AS rating, 
-MAX (lifetime_months) AS lifetime_months, (MAX (lifetime_months) / 12) AS lifetime_years, 
+MAX (lifetime_months) AS lifetime_months, ROUND(MAX (lifetime_months) / 12.0, 1) AS lifetime_years, 
 genre_new, content_rating, 
 CASE WHEN count (name) > 1 THEN SUM (net_value) + MIN (cost) + (1000 * MIN (lifetime_months))
 	ELSE net_value END AS net_value
