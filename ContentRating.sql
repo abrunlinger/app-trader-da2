@@ -1,5 +1,5 @@
 -- Content Rating
-SELECT content_rating, count (content_rating) as count
+SELECT content_rating, count (content_rating) as count, ROUND(avg(net_value), 2) AS avg_net_value
 FROM  
 (SELECT *, 
 	((5000 * lifetime_months) - cost - (1000 * lifetime_months)) as net_value 
