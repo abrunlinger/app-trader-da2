@@ -3,8 +3,10 @@
 
 (5,000x1 + 5,000x2) - y - 1,000(highest x) */
 
+SELECT price_range, count (price_range) AS count, ROUND(avg (net_value), 2) AS avg_net_value
+FROM
 -- Group by App Layer
-SELECT name, MAX (price) AS price, MAX (cost) AS cost, MAX (rating) AS rating, MAX (lifetime_months) AS lifetime_months, genre_new, content_rating, 
+(SELECT name, MAX (price) AS price, MAX (cost) AS cost, MAX (rating) AS rating, MAX (lifetime_months) AS lifetime_months, genre_new, content_rating, 
 	CASE WHEN count (name) > 1 THEN SUM (net_value) + MIN (cost) + (1000 * MIN (lifetime_months))
 	ELSE net_value END AS net_value, price_range
 FROM
@@ -31,8 +33,8 @@ FROM
 			WHEN primary_genre ILIKE '%navigation%' THEN 'Travel'
 			ELSE primary_genre END AS genre_new, 
 		content_rating,
-		  CASE WHEN price BETWEEN .01 AND 3.01 THEN '$1-3'
-		 		WHEN price BETWEEN 3.01 AND 15.01 THEN '$3-15'
+		  CASE WHEN price BETWEEN .01 AND 3.00 THEN '$1-3'
+		 		WHEN price BETWEEN 3.01 AND 15.00 THEN '$3-15'
 		 		WHEN price > 15.0 THEN '>$15'
 		 		ELSE 'Free' END AS price_range
 		FROM app_store_apps
@@ -56,8 +58,8 @@ FROM
 			WHEN genres ILIKE '%;%' THEN 'Other'
 			ELSE genres END AS genre_new, 
 		content_rating,
-		  CASE WHEN price BETWEEN .01 AND 3.01 THEN '$1-3'
-		 		WHEN price BETWEEN 3.01 AND 15.01 THEN '$3-15'
+		  CASE WHEN price BETWEEN .01 AND 3.00 THEN '$1-3'
+		 		WHEN price BETWEEN 3.01 AND 15.00 THEN '$3-15'
 		 		WHEN price > 15.0 THEN '>$15'
 		 		ELSE 'Free' END AS price_range
 		FROM 
@@ -72,5 +74,7 @@ FROM
 		) AS AppData
 	ORDER BY net_value) AS ValueLayer
 GROUP BY name, genre_new, content_rating, net_value, price_range
-ORDER BY net_value DESC	
+ORDER BY net_value DESC) AS PriceRange
+GROUP BY price_range
+ORDER BY count DESC
 ;
