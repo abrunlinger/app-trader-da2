@@ -1,5 +1,5 @@
 -- Genres
-SELECT genre_new, count (genre_new) as count
+SELECT genre_new, count (genre_new) as count, ROUND(avg (net_value), 2) AS avg_net_value
 FROM  
 (SELECT *, 
 	((5000 * lifetime_months) - cost - (1000 * lifetime_months)) as net_value 
